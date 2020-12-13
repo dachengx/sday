@@ -54,7 +54,7 @@ class dot:
             self.x = np.where(vali, x, self.x)
             self.y = np.where(vali, y, self.y)
             alphavali = vali & np.logical_not(self.validot(x, y)) & np.logical_not(self.a == 0)
-            self.a[alphavali] = np.clip(self.a[alphavali] - np.random.uniform(0, 0.05, sum(alphavali)), 0, 1)
+            self.a[alphavali] = np.clip(self.a[alphavali] - np.random.uniform(0, 0.02, sum(alphavali)), 0, 1)
         self.s = self.s + np.random.normal(0.1, 1, len(self.s))
     
     def stay(self):
@@ -150,13 +150,6 @@ for i in range(50):
     camera.snap()
     hat.draw(ax)
     frame.draw(ax)
-    red.move('random')
-    red.draw(ax)
-    blue.move('random')
-    blue.draw(ax)
-    camera.snap()
-    hat.draw(ax)
-    frame.draw(ax)
     red.move('down')
     red.draw(ax)
     blue.move('random')
@@ -165,7 +158,7 @@ for i in range(50):
     if i // 2 * 2 == i:
         convert(red, blue)
 
-for i in range(200):
+for i in range(280):
     frame.l2draw(ax)
     red.move('random')
     red.draw(ax)
