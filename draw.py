@@ -35,16 +35,16 @@ class dot:
         ax.scatter(self.x, self.y, c=rgba_colors, marker='.', s=np.clip(self.s, 0, np.inf))
 
     def move(self, dir, withhat=True):
-        step = 0.01 * a
+        step = 0.002 * a
         if dir == 'up':
-            x = self.x + np.random.uniform(-2 * step, 2 * step, len(self.x))
-            y = self.y + np.random.uniform(-step, 3 * step, len(self.y))
+            x = self.x + np.random.uniform(-2.5 * step, 2.5 * step, len(self.x))
+            y = self.y + np.random.uniform(-step, 4 * step, len(self.y))
         elif dir == 'down':
-            x = self.x + np.random.uniform(-2 * step, 2 * step, len(self.x))
-            y = self.y + np.random.uniform(-3 * step, step, len(self.y))
+            x = self.x + np.random.uniform(-2.5 * step, 2.5 * step, len(self.x))
+            y = self.y + np.random.uniform(-4 * step, step, len(self.y))
         elif dir == 'random':
-            x = self.x + np.random.uniform(-2 * step, 2 * step, len(self.x))
-            y = self.y + np.random.uniform(-step, step, len(self.y))
+            x = self.x + np.random.uniform(-2.5 * step, 2.5 * step, len(self.x))
+            y = self.y + np.random.uniform(-2.5 * step, 2.5 * step, len(self.y))
         if withhat:
             vali = self.validot(x, y)
             self.x = np.where(vali, x, self.x)
@@ -83,9 +83,13 @@ class hat:
 
 class frame:
     def __init__(self):
-        self.l0 = np.array([[a, a / 4, 0, -1 * a / 4, -1 * a, a], [0, 3 / 4 * np.sqrt(3) * a, np.sqrt(3) * a, 3 / 4 * np.sqrt(3) * a, 0, 0]])
+        eta = 0.03
+        b = (eta + 1) * a
+        self.l0 = np.array([[b, b / 4, 0, -1 * b / 4, -1 * b, b], [0, 3 / 4 * np.sqrt(3) * b, np.sqrt(3) * b, 3 / 4 * np.sqrt(3) * b, 0, 0]])
+        self.l0[1] = self.l0[1] - eta * a
         self.l1 = np.array([[a / 4, -1 * a / 4], [3 / 4 * np.sqrt(3) * a, 3 / 4 * np.sqrt(3) * a]])
-        self.l2 = np.array([[a / 4, a, -1 * a, -1 * a / 4], [3 / 4 * np.sqrt(3) * a, 0, 0, 3 / 4 * np.sqrt(3) * a]])
+        self.l2 = np.array([[b / 4, b, -1 * b, -1 * b / 4], [3 / 4 * np.sqrt(3) * b, 0, 0, 3 / 4 * np.sqrt(3) * b]])
+        self.l2[1] = self.l2[1] - eta * a
 
     def draw(self, ax):
         ax.plot(self.l0[0], self.l0[1], color='k', linewidth=4.)
@@ -95,7 +99,7 @@ class frame:
         ax.plot(self.l2[0], self.l2[1], color='k', linewidth=4.)
 
 def convert(red, blue):
-    vali = np.random.choice(2, len(red.x), p=[0.9, 0.1]).astype(np.bool)
+    vali = np.random.choice(2, len(red.x), p=[0.95, 0.05]).astype(np.bool)
     blue.x = np.append(blue.x, red.x[vali])
     blue.y = np.append(blue.y, red.y[vali])
     blue.s = np.append(blue.s, red.s[vali])
@@ -123,7 +127,7 @@ blue = dot('blue')
 hat = hat()
 frame = frame()
 
-for _ in range(100):
+for _ in range(60):
     frame.draw(ax)
     red.move('random')
     red.draw(ax)
@@ -131,7 +135,7 @@ for _ in range(100):
     blue.draw(ax)
     camera.snap()
 
-for _ in range(100):
+for i in range(220):
     hat.draw(ax)
     frame.draw(ax)
     red.move('random')
@@ -139,13 +143,24 @@ for _ in range(100):
     blue.move('random')
     blue.draw(ax)
     camera.snap()
+    if i // 5 * 5 == i:
+        convert(blue, red)
+    if i // 5 * 5 == i:
+        convert(red, blue)
 
-for i in range(50):
+for i in range(80):
     hat.draw(ax)
     frame.draw(ax)
     red.move('random')
     red.draw(ax)
     blue.move('up')
+    blue.draw(ax)
+    camera.snap()
+    hat.draw(ax)
+    frame.draw(ax)
+    red.move('random')
+    red.draw(ax)
+    blue.move('random')
     blue.draw(ax)
     camera.snap()
     hat.draw(ax)
@@ -158,10 +173,27 @@ for i in range(50):
     if i // 2 * 2 == i:
         convert(red, blue)
 
+for i in range(50):
+    frame.l2draw(ax)
+    red.move('random')
+    red.draw(ax)
+    blue.move('up')
+    blue.draw(ax)
+    camera.snap()
+
 for i in range(280):
     frame.l2draw(ax)
     red.move('random')
     red.draw(ax)
+    blue.move('up', withhat=False)
+    blue.draw(ax)
+    camera.snap()
+    frame.l2draw(ax)
+    red.move('down')
+    red.draw(ax)
+    blue.move('random')
+    blue.move('up', withhat=False)
+    blue.move('random')
     blue.move('up', withhat=False)
     blue.draw(ax)
     camera.snap()
