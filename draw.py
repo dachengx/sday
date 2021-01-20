@@ -21,7 +21,7 @@ class dot:
         vali = self.validot(x, y)
         self.x = x[vali]
         self.y = y[vali]
-        self.s = (np.ones_like(x) * 16 + np.random.normal(0, 1, len(x)))[vali]
+        self.s = (np.ones_like(x) * 25 + np.random.normal(0, 1, len(x)))[vali]
         self.c = c
         self.a = np.ones_like(self.x)
     
@@ -67,7 +67,7 @@ class dot:
             vali = (x > -1 * a) & (x < a) & (((x > -1 * a) & (x < -1 / 4 * a) & ((a + x) * np.sqrt(3) > y)) | ((x < a) & (x > 1 / 4 * a) & ((a - x) * np.sqrt(3) > y)) | ((x > -1 / 4 * a) & (x < 1 / 4 * a))) & (y > 0)
         return vali
 
-class hat:
+class Hat:
     def __init__(self):
         pass
 
@@ -81,7 +81,7 @@ class hat:
         vali = ((a + x) * np.sqrt(3) > y) & ((a - x) * np.sqrt(3) > y) & (y > 3 / 4  * np.sqrt(3) * a)
         return vali
 
-class frame:
+class Frame:
     def __init__(self):
         eta = 0.03
         b = (eta + 1) * a
@@ -109,7 +109,7 @@ def convert(red, blue):
     red.s = red.s[np.logical_not(vali)]
     red.a = red.a[np.logical_not(vali)]
 
-fig = plt.figure()
+fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
 camera = Camera(fig)
 ax = fig.add_subplot(111)
 ax.axis('equal')
@@ -117,15 +117,15 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
 ax.spines['left'].set_visible(False)
-ax.set_xlim(-1.5 * a, 1.5 * a)
-ax.set_ylim(-1. * a, (1 + np.sqrt(3)) * a)
+ax.set_xlim(-1.01 * a, 1.01 * a)
+ax.set_ylim(-0.5 * a, (0.5 + np.sqrt(3)) * a)
 ax.set_xticks([])
 ax.set_yticks([])
 
 red = dot('red')
 blue = dot('blue')
-hat = hat()
-frame = frame()
+hat = Hat()
+frame = Frame()
 
 for _ in range(60):
     frame.draw(ax)
@@ -200,3 +200,45 @@ for i in range(280):
 
 animation = camera.animate(interval=100)
 animation.save('animation.mp4')
+plt.close(fig)
+
+fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
+camera = Camera(fig)
+ax = fig.add_subplot(111)
+ax.axis('equal')
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.set_xlim(-1.01 * a, 1.01 * a)
+ax.set_ylim(-0.5 * a, (0.5 + np.sqrt(3)) * a)
+ax.set_xticks([])
+ax.set_yticks([])
+
+red = dot('red')
+blue = dot('blue')
+hat = Hat()
+frame = Frame()
+
+for _ in range(200):
+    frame.draw(ax)
+    red.move('random')
+    red.draw(ax)
+    blue.move('random')
+    blue.draw(ax)
+    camera.snap()
+
+animation = camera.animate(interval=100)
+animation.save('animation2.mp4')
+plt.close(fig)
+
+plt.style.use('dark_background')
+fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
+camera = Camera(fig)
+
+for _ in range(50):
+    camera.snap()
+
+animation = camera.animate(interval=100)
+animation.save('animation3.mp4')
+plt.close(fig)
